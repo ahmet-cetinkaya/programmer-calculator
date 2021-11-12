@@ -1,0 +1,232 @@
+<form [formGroup]="calculatorForm" (submit)="calculate()" id="programmer-calculator">
+  <input type="text" id="calculator-input" formControlName="input" (keyup)="onChange()" />
+  <div id="option-menu" class="d-flex justify-content-around my-3">
+    <div id="bitwise" class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="bitwise"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Bitwise
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="bitwise">
+        <li><a class="dropdown-item" (click)="addOperatorToInput(operatorSymbols.And)">AND</a></li>
+        <li><a class="dropdown-item" (click)="addOperatorToInput(operatorSymbols.Or)">OR</a></li>
+        <li><a class="dropdown-item" (click)="notFunction()">NOT</a></li>
+        <li>
+          <a class="dropdown-item" (click)="addOperatorToInput(operatorSymbols.NAnd)">NAND</a>
+        </li>
+        <li><a class="dropdown-item" (click)="addOperatorToInput(operatorSymbols.NOr)">NOR</a></li>
+        <li><a class="dropdown-item" (click)="addOperatorToInput(operatorSymbols.Xor)">XOR</a></li>
+      </ul>
+    </div>
+    <div id="bit-shift" class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="bitwise"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Shift
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="bitwise">
+        <li>
+          <a
+            class="dropdown-item shift-option"
+            [ngClass]="{active: isActiveShift(shift.ArithmeticShift)}"
+            (click)="changeShift(shift.ArithmeticShift)"
+            >Arithmetic Shift</a
+          >
+        </li>
+        <li>
+          <a
+            class="dropdown-item shift-option"
+            [ngClass]="{active: isActiveShift(shift.LogicalShift)}"
+            (click)="changeShift(shift.LogicalShift)"
+            >Logical Shift</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div id="radix">
+      <select class="form-select" formControlName="radix">
+        <option *ngFor="let numberSystem of numberSystems" [value]="numberSystem.radix">
+          {{ numberSystem.name.slice(0, 3) | uppercase }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div id="calculator-buttons">
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('A')"
+    >
+      A
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="addOperatorToInput(operatorSymbols.LeftShift)"
+    >
+      ≪
+    </button>
+    <button type="button" class="btn btn-primary" (click)="addRightShiftOperatorToInput()">
+      ≫
+    </button>
+    <button type="button" class="btn btn-primary" (click)="resetInput()">C</button>
+    <button type="button" class="btn btn-primary" (click)="backspace()">←</button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('B')"
+    >
+      B
+    </button>
+    <button type="button" class="btn btn-primary" (click)="addNumberToInput('(')">(</button>
+    <button type="button" class="btn btn-primary" (click)="addNumberToInput(')')">)</button>
+    <button type="button" class="btn btn-primary" (click)="addOperatorToInput(operatorSymbols.Mod)">
+      ⁒
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="addOperatorToInput(operatorSymbols.Division)"
+    >
+      ÷
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('C')"
+    >
+      C
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('7')"
+    >
+      7
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Decimal)"
+      (click)="addNumberToInput('8')"
+    >
+      8
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Decimal)"
+      (click)="addNumberToInput('9')"
+    >
+      9
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="addOperatorToInput(operatorSymbols.Multiplication)"
+    >
+      ×
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('D')"
+    >
+      D
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('4')"
+    >
+      4
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('5')"
+    >
+      5
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('6')"
+    >
+      6
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="addOperatorToInput(operatorSymbols.Minus)"
+    >
+      -
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('E')"
+    >
+      E
+    </button>
+    <button type="button" class="btn btn-primary" (click)="addNumberToInput('1')">1</button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('2')"
+    >
+      2
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Octal)"
+      (click)="addNumberToInput('3')"
+    >
+      3
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="addOperatorToInput(operatorSymbols.Plus)"
+    >
+      +
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isOutOfRadix(numberSystemRadix.Hexadecimal)"
+      (click)="addNumberToInput('F')"
+    >
+      F
+    </button>
+    <button type="button" class="btn btn-primary" (click)="changeNegative()">±</button>
+    <button type="button" class="btn btn-primary" (click)="addNumberToInput('0')">0</button>
+    <button type="button" class="btn btn-primary" (click)="addNumberToInput('00')">00</button>
+    <button type="submit" class="btn btn-primary" (click)="calculate()">=</button>
+  </div>
+</form>

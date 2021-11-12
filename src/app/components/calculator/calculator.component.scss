@@ -1,0 +1,40 @@
+@import '../../../styles.scss';
+#programmer-calculator {
+  #calculator-input {
+    @extend .rounded;
+    width: 100%;
+    height: 100%;
+    border: none;
+    font-size: 1.5em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    background-color: rgba(0, 0, 0, 0.1);
+    text-align: right;
+    padding: 0.5em;
+    margin: 0;
+    outline: none;
+  }
+
+  #calculator-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: 0.6em;
+
+    button {
+      height: 4rem;
+    }
+  }
+
+  #option-menu {
+    * {
+      @extend .px-2;
+      width: 100%;
+    }
+  }
+
+  #bit-shift {
+    .shift-option {
+      cursor: pointer;
+    }
+  }
+}
