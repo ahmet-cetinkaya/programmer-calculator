@@ -1,5 +1,9 @@
-@import "../../../styles.scss";
+@import '../../../styles.scss';
 
 #page-header {
   background: $main-color;
+
+  .figure-attribute {
+    opacity: 0.1;
+  }
 }

@@ -42,27 +42,7 @@ export class NumberSystem {
     return false;
   }
 
-  static convert(number: string, fromRadix: number, toRadix: number): string {
-    if (fromRadix == NumberSystemRadix.Binary) {
-      if (toRadix == NumberSystemRadix.Octal) return parseInt(number, 2).toString(8);
-      if (toRadix == NumberSystemRadix.Decimal) return parseInt(number, 2).toString(10);
-      if (toRadix == NumberSystemRadix.Hexadecimal) return parseInt(number, 2).toString(16);
-    }
-    if (fromRadix == NumberSystemRadix.Octal) {
-      if (toRadix == NumberSystemRadix.Binary) return parseInt(number, 8).toString(2);
-      if (toRadix == NumberSystemRadix.Decimal) return parseInt(number, 8).toString(10);
-      if (toRadix == NumberSystemRadix.Hexadecimal) return parseInt(number, 8).toString(16);
-    }
-    if (fromRadix == NumberSystemRadix.Decimal) {
-      if (toRadix == NumberSystemRadix.Binary) return parseInt(number, 10).toString(2);
-      if (toRadix == NumberSystemRadix.Octal) return parseInt(number, 10).toString(8);
-      if (toRadix == NumberSystemRadix.Hexadecimal) return parseInt(number, 10).toString(16);
-    }
-    if (fromRadix == NumberSystemRadix.Hexadecimal) {
-      if (toRadix == NumberSystemRadix.Binary) return parseInt(number, 16).toString(2);
-      if (toRadix == NumberSystemRadix.Octal) return parseInt(number, 16).toString(8);
-      if (toRadix == NumberSystemRadix.Decimal) return parseInt(number, 16).toString(10);
-    }
-    return number;
+  static convert(number: string, fromRadix: NumberSystemRadix, toRadix: NumberSystemRadix): string {
+    return parseInt(number, fromRadix).toString(toRadix);
   }
 }

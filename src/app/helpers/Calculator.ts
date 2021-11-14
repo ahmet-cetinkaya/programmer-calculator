@@ -42,15 +42,16 @@ export class Calculator {
   );
 
   static calculate(input: string, radix: NumberSystemRadix): string {
-    if (this.checkIsNotDecoded(input)) input = Calculator.decode(input, radix);
-    let result: number = eval(input);
+    if (!this.isEncodedInput(input)) return input;
+    input = Calculator.decode(input, radix);
+    let result: number = parseInt(eval(input));
     return result.toString(radix);
   }
 
   static encode(input: string, radix: NumberSystemRadix): string {
     input = input
-      .replaceAll(Operator.Plus, OperatorSymbol.Plus)
-      .replaceAll(Operator.Minus, OperatorSymbol.Minus)
+      .replaceAll(Operator.Plus, ` ${OperatorSymbol.Plus} `)
+      .replaceAll(Operator.Minus, ` ${OperatorSymbol.Minus} `)
       .replaceAll(Operator.Multiplication, ` ${OperatorSymbol.Multiplication} `)
       .replaceAll(Operator.Division, ` ${OperatorSymbol.Division} `)
       .replaceAll(Operator.Mod, ` ${OperatorSymbol.Mod} `)
@@ -127,9 +128,9 @@ export class Calculator {
     return inputArray.join('');
   }
 
-  static checkIsNotDecoded(input: string): boolean {
+  static isEncodedInput(input: string): boolean {
     if (typeof input !== 'string') input = String(input);
-    return Object.values(OperatorSymbol).some(operatorSymbol => input.includes(operatorSymbol));
+    return this.operatorSymbolsRegex.test(input);
   }
 
   static convertRadixInInput(

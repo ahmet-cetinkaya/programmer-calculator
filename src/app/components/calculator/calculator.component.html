@@ -1,5 +1,12 @@
 <form [formGroup]="calculatorForm" (submit)="calculate()" id="programmer-calculator">
-  <input type="text" id="calculator-input" formControlName="input" (keyup)="onChange()" />
+  <input
+    type="text"
+    id="calculator-input"
+    formControlName="input"
+    (keyup)="onChange()"
+    autofocus
+    autocomplete="off"
+  />
   <div id="option-menu" class="d-flex justify-content-around my-3">
     <div id="bitwise" class="dropdown">
       <button
@@ -38,7 +45,7 @@
             class="dropdown-item shift-option"
             [ngClass]="{active: isActiveShift(shift.ArithmeticShift)}"
             (click)="changeShift(shift.ArithmeticShift)"
-            >Arithmetic Shift</a
+            >Arithmetic</a
           >
         </li>
         <li>
@@ -46,7 +53,7 @@
             class="dropdown-item shift-option"
             [ngClass]="{active: isActiveShift(shift.LogicalShift)}"
             (click)="changeShift(shift.LogicalShift)"
-            >Logical Shift</a
+            >Logical</a
           >
         </li>
       </ul>
