@@ -1,5 +1,7 @@
 import {NumberSystem, NumberSystemRadix} from './NumberSystem';
 
+import {String as ACString} from 'src/app/helpers/String';
+
 export enum Operator {
   Plus = '+',
   Minus = '-',
@@ -44,11 +46,13 @@ export class Calculator {
   static calculate(input: string, radix: NumberSystemRadix): string {
     if (!this.isEncodedInput(input)) return input;
     input = Calculator.decode(input, radix);
+    console.log('🚀 Problem is solving:', input);
     let result: number = parseInt(eval(input));
     return result.toString(radix);
   }
 
   static encode(input: string, radix: NumberSystemRadix): string {
+    // Convert keyboard input to operators
     input = input
       .replaceAll(Operator.Plus, ` ${OperatorSymbol.Plus} `)
       .replaceAll(Operator.Minus, ` ${OperatorSymbol.Minus} `)
@@ -65,15 +69,11 @@ export class Calculator {
   }
 
   static decode(input: string, radix: NumberSystemRadix): string {
-    const inputArray = input.split(' ');
-
     // Convert Numbers To Decimal
-    inputArray.forEach((value, index) => {
-      if (!this.operatorSymbolsRegex.test(value))
-        inputArray[index] = NumberSystem.convert(value, radix, NumberSystemRadix.Decimal);
-    });
+    input = this.convertRadixInInput(input, radix, NumberSystemRadix.Decimal);
 
     // Convert Operators
+    const inputArray = input.split(' ');
     inputArray.forEach((value, index) => {
       switch (value) {
         case OperatorSymbol.Plus:
@@ -140,8 +140,31 @@ export class Calculator {
   ): string {
     const inputArray = input.split(' ');
     inputArray.forEach((value, index) => {
-      if (!this.operatorSymbolsRegex.test(value))
-        inputArray[index] = NumberSystem.convert(value, fromRadix, toRadix);
+      if (value !== '' && !this.operatorSymbolsRegex.test(value)) {
+        if (value.includes('(') && value.includes(')')) {
+          const startIndex = value.lastIndexOf('(') + 1,
+            endIndex = value.indexOf(')'),
+            number = value.substring(startIndex, endIndex);
+          inputArray[index] = value.replace(
+            `(${number})`,
+            `(${NumberSystem.convert(number, fromRadix, toRadix)})`,
+          );
+        } else if (value.includes('(')) {
+          const startIndex = value.lastIndexOf('(') + 1,
+            number = value.substring(startIndex);
+          inputArray[index] = value.replace(
+            `(${number}`,
+            `(${NumberSystem.convert(number, fromRadix, toRadix)}`,
+          );
+        } else if (value.includes(')')) {
+          const endIndex = value.indexOf(')'),
+            number = value.substring(0, endIndex);
+          inputArray[index] = value.replace(
+            `${number})`,
+            `${NumberSystem.convert(number, fromRadix, toRadix)})`,
+          );
+        } else inputArray[index] = NumberSystem.convert(value, fromRadix, toRadix);
+      }
     });
     return inputArray.join(' ').toUpperCase();
   }

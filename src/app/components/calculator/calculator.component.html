@@ -1,12 +1,14 @@
 <form [formGroup]="calculatorForm" (submit)="calculate()" id="programmer-calculator">
-  <input
-    type="text"
+  <textarea
+    #calculatorInput
     id="calculator-input"
     formControlName="input"
     (keyup)="onChange()"
+    (blur)="setFocus()"
+    rows="1"
     autofocus
     autocomplete="off"
-  />
+  ></textarea>
   <div id="option-menu" class="d-flex justify-content-around my-3">
     <div id="bitwise" class="dropdown">
       <button

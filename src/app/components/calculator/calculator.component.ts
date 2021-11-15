@@ -1,9 +1,10 @@
 import {Calculator} from 'src/app/helpers/Calculator';
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NumberSystemRadix, Shift, numberSystems} from './../../helpers/NumberSystem';
 import {OperatorSymbol} from './../../helpers/Calculator';
 import {pairwise, startWith} from 'rxjs/operators';
+import {String as ACString} from 'src/app/helpers/String';
 
 @Component({
   selector: 'app-calculator',
@@ -12,6 +13,7 @@ import {pairwise, startWith} from 'rxjs/operators';
 })
 export class CalculatorComponent implements OnInit {
   calculatorForm!: FormGroup;
+  @ViewChild('calculatorInput', {static: false}) calculatorInput!: ElementRef;
 
   numberSystems = numberSystems;
   operatorSymbols = OperatorSymbol;
@@ -34,7 +36,6 @@ export class CalculatorComponent implements OnInit {
       .get('radix')
       ?.valueChanges.pipe(startWith(String(NumberSystemRadix.Binary)), pairwise())
       .subscribe(([prev, next]: [any, any]) => {
-        console.log(prev, next);
         const {input} = this.calculatorForm.value;
         if (!input) return;
         const result = Calculator.convertRadixInInput(input, prev, next);
@@ -52,26 +53,33 @@ export class CalculatorComponent implements OnInit {
     this.calculatorForm.patchValue({shift});
   }
 
-  isActiveShift(shift: Shift) {
-    const shiftState = this.calculatorForm.get('shift')?.value;
-    return shift === shiftState;
-  }
-
   addOperatorToInput(value: string) {
     const {input} = this.calculatorForm.value;
-    this.calculatorForm.patchValue({input: input + ` ${value} `});
+    const index = this.calculatorInput.nativeElement.selectionEnd;
+    this.calculatorForm.patchValue({
+      input: ACString.addToIndex(input, index, ` ${value} `),
+    });
   }
 
   addRightShiftOperatorToInput() {
     const {input, shift} = <{input: string; shift: Shift}>this.calculatorForm.value;
+    const index = this.calculatorInput.nativeElement.selectionEnd;
     if (shift === Shift.ArithmeticShift)
-      this.calculatorForm.patchValue({input: input + ` ${OperatorSymbol.RightShift} `});
-    else this.calculatorForm.patchValue({input: input + ` ${OperatorSymbol.UnsignedRightShift} `});
+      this.calculatorForm.patchValue({
+        input: ACString.addToIndex(input, index, ` ${OperatorSymbol.RightShift} `),
+      });
+    else
+      this.calculatorForm.patchValue({
+        input: ACString.addToIndex(input, index, ` ${OperatorSymbol.UnsignedRightShift} `),
+      });
   }
 
   addNumberToInput(value: string) {
     const {input} = <{input: string}>this.calculatorForm.value;
-    this.calculatorForm.patchValue({input: input + value});
+    const index = this.calculatorInput.nativeElement.selectionEnd;
+    this.calculatorForm.patchValue({
+      input: ACString.addToIndex(input, index, value),
+    });
   }
 
   resetInput() {
@@ -80,8 +88,9 @@ export class CalculatorComponent implements OnInit {
 
   backspace() {
     const {input} = <{input: string}>this.calculatorForm.value;
+    const index = this.calculatorInput.nativeElement.selectionEnd;
     if (!input) return;
-    this.calculatorForm.patchValue({input: input.slice(0, -1)});
+    this.calculatorForm.patchValue({input: ACString.removeFromIndex(input, index)});
   }
 
   isOutOfRadix(numberRadix: NumberSystemRadix) {
@@ -106,5 +115,15 @@ export class CalculatorComponent implements OnInit {
     if (!input) return;
     const result: string = Calculator.calculate(input, radix);
     this.calculatorForm.patchValue({input: result});
+  }
+
+  setFocus(): void {
+    const calculatorInputElement = this.calculatorInput.nativeElement;
+    calculatorInputElement.focus();
+  }
+
+  isActiveShift(shift: Shift) {
+    const shiftState = this.calculatorForm.get('shift')?.value;
+    return shift === shiftState;
   }
 }
